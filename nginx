@@ -1,0 +1,47 @@
+server {
+    if ($host = your.domanin.com) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    listen [::]:80;
+    server_name your.domanin.com;
+    # enforce https
+    return 301 https://your.domanin.com:443$request_uri;
+
+
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name your.domanin.com;
+
+    # Use Mozilla's guidelines for SSL/TLS settings
+    # https://mozilla.github.io/server-side-tls/ssl-config-generator/
+    # NOTE: some settings below might be redundant
+    ssl_certificate /etc/letsencrypt/live/your.domanin.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your.domanin.com/privkey.pem;
+    # document root
+
+    root /usr/share/nginx;
+    index index.php index.html index.htm;
+
+            location ~ \.php$ {
+            fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME  $document_root/$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    # logging
+    error_log /var/log/nginx/phpldapadmin.error.log;
+    access_log /var/log/nginx/phpldapadmin.access.log;
+
+    ssl_certificate /etc/letsencrypt/live/your.domanin.com/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/your.domanin.com/privkey.pem; # managed by Certbot
+
+    ssl_trusted_certificate /etc/letsencrypt/live/your.domanin.com/chain.pem; # managed by Certbot
+    ssl_stapling on; # managed by Certbot
+    ssl_stapling_verify on; # managed by Certbot
+}
