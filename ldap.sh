@@ -42,3 +42,6 @@ sudo sed -i "s/userPassword: <password>/userPassword:$shadows/g" /etc/ldap/$ldap
 sudo ldapadd -D "$aldap" -W -H ldapi:/// -f $ladpname.ldif
 sudo ldapsearch -x -b "ou=People,$dcldap"
 
+
+
+
