@@ -1,0 +1,14 @@
+# Content of new_users LDIF file
+
+dn: cn=new_user,ou=People,dc=your,dc=domain,dc=com
+objectClass: top
+objectClass: account
+objectClass: posixAccount
+objectClass: shadowAccount
+cn: new_user
+uid: new_user
+uidNumber: 10001
+gidNumber: 10001
+homeDirectory: /home/new_user
+userPassword: <password>
+loginShell: /bin/bash
