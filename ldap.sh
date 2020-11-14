@@ -15,11 +15,14 @@ sudo apt-get install ldap-utils -y
 sudo cp ./users.ldif /etc/ldap/
 dcldap=`sudo slapcat | grep dc | head -n1 | awk '{print $2}'`
 aldap=`sudo slapcat | grep admin | head -n1 | awk '{print $2}'`
-sudo sed -i "s/dc=your,dc=domain,dc=com/$dcldap/g" /etc/ldap/users.ldif
-sudo ldapadd -D "$aldap" -W -H ldap:/// -f users.ldif
+sudo sed -i "s|dc=your,dc=domain,dc=com|$dcldap|g" /etc/ldap/users.ldif
+echo " "
+echo "================================================================================================================================"
+echo " "
+echo "Administrator LDAP Password"
+sudo ldapadd -D "$aldap" -W -H ldapi:/// -f /etc/ldap/users.ldif
 sudo ldapsearch -x -b "$dcldap" ou
-
-
+echo " "
 echo "================================================================================================================================"
 echo " "
 read -p 'Please enter new user name: ' ldapname
@@ -32,16 +35,13 @@ fi
 echo " "
 
 sudo slappasswd >> /tmp/shadow.txt
-sudo $shadows=`cat /tmp/shadow.txt`
+shadows=`cat /tmp/shadow.txt`
 sudo rm /tmp/shadow.txt
 sudo cp ./new_user.ldif /etc/ldap/
 sudo mv /etc/ldap/new_user.ldif /etc/ldap/$ldapname.ldif
 sudo sed -i "s/new_user/$ldapname/g" /etc/ldap/$ldapname.ldif
-sudo sed -i "s/dc=your,dc=domain,dc=com/$dcldap/g"  /etc/ldap/$ldapname.ldif
-sudo sed -i "s/userPassword: <password>/userPassword:$shadows/g" /etc/ldap/$ldapname.ldif
-sudo ldapadd -D "$aldap" -W -H ldapi:/// -f $ladpname.ldif
+sudo sed -i "s|dc=your,dc=domain,dc=com|$dcldap|g"  /etc/ldap/$ldapname.ldif
+sudo sed -i "s/password/$shadows/g" /etc/ldap/$ldapname.ldif
+sudo ldapadd -D "$aldap" -W -H ldapi:/// -f /etc/ldap/$ldapname.ldif
 sudo ldapsearch -x -b "ou=People,$dcldap"
-
-
-
 

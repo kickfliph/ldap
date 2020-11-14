@@ -10,5 +10,5 @@ uid: new_user
 uidNumber: 10001
 gidNumber: 10001
 homeDirectory: /home/new_user
-userPassword: <password>
+userPassword: password
 loginShell: /bin/bash
