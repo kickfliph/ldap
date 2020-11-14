@@ -45,3 +45,9 @@ sudo sed -i "s/password/$shadows/g" /etc/ldap/$ldapname.ldif
 sudo ldapadd -D "$aldap" -W -H ldapi:/// -f /etc/ldap/$ldapname.ldif
 sudo ldapsearch -x -b "ou=People,$dcldap"
 
+sudo cp ./enable-ldap-log.ldif /etc/ldap/
+sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
+sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config "(objectClass=olcGlobal)" olcLogLevel -LLL
+sudo echo "local4.* /var/log/slapd.log" >> /etc/rsyslog.conf
+sudo systemctl restart rsyslog
+sudo systemctl restart slapd
