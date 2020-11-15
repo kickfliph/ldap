@@ -21,11 +21,11 @@ server {
     # Use Mozilla's guidelines for SSL/TLS settings
     # https://mozilla.github.io/server-side-tls/ssl-config-generator/
     # NOTE: some settings below might be redundant
-    ssl_certificate /etc/letsencrypt/live/your.domanin.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/your.domanin.com/privkey.pem;
+#    ssl_certificate /etc/letsencrypt/live/your.domanin.com/fullchain.pem;
+#    ssl_certificate_key /etc/letsencrypt/live/your.domanin.com/privkey.pem;
     # document root
 
-    root /usr/share/nginx;
+    root /var/www/html;
     index index.php index.html index.htm;
 
             location ~ \.php$ {
@@ -38,10 +38,10 @@ server {
     error_log /var/log/nginx/phpldapadmin.error.log;
     access_log /var/log/nginx/phpldapadmin.access.log;
 
-    ssl_certificate /etc/letsencrypt/live/your.domanin.com/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/your.domanin.com/privkey.pem; # managed by Certbot
+#    ssl_certificate /etc/letsencrypt/live/your.domanin.com/fullchain.pem; # managed by Certbot
+#    ssl_certificate_key /etc/letsencrypt/live/your.domanin.com/privkey.pem; # managed by Certbot
 
-    ssl_trusted_certificate /etc/letsencrypt/live/your.domanin.com/chain.pem; # managed by Certbot
-    ssl_stapling on; # managed by Certbot
-    ssl_stapling_verify on; # managed by Certbot
+#    ssl_trusted_certificate /etc/letsencrypt/live/your.domanin.com/chain.pem; # managed by Certbot
+#    ssl_stapling on; # managed by Certbot
+#    ssl_stapling_verify on; # managed by Certbot
 }
