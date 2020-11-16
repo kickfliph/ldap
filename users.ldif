@@ -1,5 +1,0 @@
-# Content of the users file
-
-dn: ou=People,dc=your,dc=domain,dc=com
-objectClass: organizationalUnit
-ou: People

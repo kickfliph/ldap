@@ -12,40 +12,18 @@ sudo systemctl status slapd
 sudo apt-get install ldap-utils -y
 
 
-sudo cp ./users.ldif /etc/ldap/
 dcldap=`sudo slapcat | grep dc | head -n1 | awk '{print $2}'`
 aldap=`sudo slapcat | grep admin | head -n1 | awk '{print $2}'`
-sudo sed -i "s|dc=your,dc=domain,dc=com|$dcldap|g" /etc/ldap/users.ldif
-echo " "
 echo "================================================================================================================================"
-echo " "
-echo "Administrator LDAP Password"
-sudo ldapadd -D "$aldap" -W -H ldapi:/// -f /etc/ldap/users.ldif
-sudo ldapsearch -x -b "$dcldap" ou
-echo " "
-echo "================================================================================================================================"
-echo " "
-read -p 'Please enter new user name: ' ldapname
 echo " "
 read -p 'Please enter your email: ' my_email
 
-if [ -z "$ldapname" ] || [ -z "$my_email" ]
+if [ -z "$my_email" ]
 then
     echo 'Inputs cannot be blank please try again!'
     exit 0
 fi
 echo " "
-
-sudo slappasswd >> /tmp/shadow.txt
-shadows=`cat /tmp/shadow.txt`
-sudo rm /tmp/shadow.txt
-sudo cp ./new_user.ldif /etc/ldap/
-sudo mv /etc/ldap/new_user.ldif /etc/ldap/$ldapname.ldif
-sudo sed -i "s/new_user/$ldapname/g" /etc/ldap/$ldapname.ldif
-sudo sed -i "s|dc=your,dc=domain,dc=com|$dcldap|g"  /etc/ldap/$ldapname.ldif
-sudo sed -i "s/password/$shadows/g" /etc/ldap/$ldapname.ldif
-sudo ldapadd -D "$aldap" -W -H ldapi:/// -f /etc/ldap/$ldapname.ldif
-sudo ldapsearch -x -b "ou=People,$dcldap"
 
 sudo cp ./enable-ldap-log.ldif /etc/ldap/
 sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
@@ -74,4 +52,6 @@ sudo sed -i "s|$servers->setValue('login','bind_id','');|$servers->setValue('log
 nginx -t
 systemctl start nginx
 systemctl status nginx
+
+
 
