@@ -39,10 +39,8 @@ sudo ps aux  |  grep -i nginx  |  awk '{print $2}' | xargs sudo kill -9
 
 sudo git clone https://github.com/leenooks/phpLDAPadmin.git /var/www/html/phpldapadmin
 sudo cp ./config.php   /var/www/html/phpldapadmin/config/config.php 
-configphp001='$servers->setValue('server','base',array('$dcldap'));'
-configphp002='$servers->setValue('login','bind_id','$aldap');'
-echo $configphp001 | sudo tee -a /var/www/html/phpldapadmin/config/config.php 
-echo $configphp002 | sudo tee -a /var/www/html/phpldapadmin/config/config.php 
+sudo sed -i "s|$servers->setValue('server','base',array(''));|$servers->setValue('server','base',array('$dcldap'));|g"  /var/www/html/phpldapadmin/config/config.php
+sudo sed -i "s|$servers->setValue('login','bind_id','');|$servers->setValue('login','bind_id','$aldap');|g"  /var/www/html/phpldapadmin/config/config.php
 sudo sed -i "s|My LDAP Server|$dcldap|g"  /var/www/html/phpldapadmin/config/config.php
 
 nginx -t

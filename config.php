@@ -298,7 +298,7 @@ $servers->setValue('server','host','127.0.0.1');
 
 /* Array of base DNs of your LDAP server. Leave this blank to have phpLDAPadmin
    auto-detect it for you. */
-// $servers->setValue('server','base',array(''));
+$servers->setValue('server','base',array(''));
 
 /* Five options for auth_type:
    1. 'cookie': you will login via a web form, and a client-side cookie will
@@ -324,7 +324,7 @@ $servers->setValue('server','host','127.0.0.1');
    auth_type, then you can also specify the bind_id/bind_pass here for searching
    the directory for users (ie, if your LDAP server does not allow anonymous
    binds. */
-// $servers->setValue('login','bind_id','');
+$servers->setValue('login','bind_id','');
 #  $servers->setValue('login','bind_id','cn=Manager,dc=example,dc=com');
 
 /* Your LDAP password. If you specified an empty bind_id above, this MUST also
