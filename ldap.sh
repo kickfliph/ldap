@@ -47,6 +47,17 @@ nginx -t
 systemctl start nginx
 systemctl status nginx
 
+#Allow OpenLDAP to use LE certificates
+
+sudo useradd letsencrypt
+sudo chown openldap:letsencrypt /etc/letsencrypt/ -R
+sudo usermod -a -G letsencrypt openldap
+sudo cp ./ssl.ldif /etc/ldap/
+sudo sed -i "s|your.domain.com|`hostname`|g" /etc/ldap/ssl.ldif
+sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/ssl.ldif
+sudo sed -i "s|SLAPD_SERVICES|#SLAPD_SERVICES|g"  /etc/default/slapd
+sldapservices='SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
+echo $sldapservices >> /etc/default/slapd
 
 sudo cp ./enable-ldap-log.ldif /etc/ldap/
 sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
