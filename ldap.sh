@@ -56,6 +56,10 @@ sudo sed -i "s|SLAPD_SERVICES|#SLAPD_SERVICES|g"  /etc/default/slapd
 sldapservices='SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
 echo $sldapservices >> /etc/default/slapd
 
+sudo cp ./forcetls.ldif /etc/ldap/
+sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/forcetls.ldif
+sudo usermod -aG ssl-cert openldap
+
 sudo cp ./enable-ldap-log.ldif /etc/ldap/
 sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
 sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config "(objectClass=olcGlobal)" olcLogLevel -LLL
