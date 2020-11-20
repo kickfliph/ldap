@@ -1,0 +1,23 @@
+server {
+    listen 80;
+    listen [::]:80;
+    server_name your.domanin.com;
+
+    # Use Mozilla's guidelines for SSL/TLS settings
+    # https://mozilla.github.io/server-side-tls/ssl-config-generator/
+    # NOTE: some settings below might be redundant
+    # document root
+
+    root /var/www/html/phpldapadmin/;
+    index index.php index.html index.htm;
+
+            location ~ \.php$ {
+            fastcgi_pass unix:/run/php/php7.3-fpm.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME  $document_root/$fastcgi_script_name;
+            include fastcgi_params;
+        }
+    # logging
+    error_log /var/log/nginx/phpldapadmin.error.log;
+    access_log /var/log/nginx/phpldapadmin.access.log;
+}
