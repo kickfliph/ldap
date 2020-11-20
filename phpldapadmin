@@ -23,7 +23,7 @@ server {
     # NOTE: some settings below might be redundant
     # document root
 
-    root /var/www/html;
+    root /var/www/html/phpldapadmin/;
     index index.php index.html index.htm;
 
             location ~ \.php$ {
