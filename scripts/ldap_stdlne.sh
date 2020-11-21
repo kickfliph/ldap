@@ -28,7 +28,7 @@ then
 fi
 echo " "
 
-cp ../phpldapadmin /etc/nginx/sites-available/
+cp ./phpldapadmin /etc/nginx/sites-available/
 sudo sed -i "s/your.domanin.com/$my_hostname/g" /etc/nginx/sites-available/phpldapadmin
 sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/phpldapadmin /etc/nginx/sites-enabled/
@@ -37,21 +37,21 @@ echo "==========================================================================
 echo " "
 regex="^(([-a-zA-Z0-9\!#\$%\&\'*+/=?^_`{\|}~]+|(\"([][,:;<>\&@a-zA-Z0-9\!#\$%\&\'*+/=?^_`{\|}~-]|(\\\\[\\ \"]))+\"))\.)*([-a-zA-Z0-9\!#\$%\&\'*+/=?^_`{\|}~]+|(\"([][,:;<>\&@a-zA-Z0-9\!#\$%\&\'*+/=?^_`{\|}~-]|(\\\\[\\ \"]))+\"))@\w((-|\w)*\w)*\.(\w((-|\w)*\w)*\.)*\w{2,4}$"
 echo "Please enter your email address: "
-read i
+read my_email
  
-if [[ $i =~ $regex ]] ; then
+if [[ $my_email=~$regex ]] ; then
     echo ""
+    certbot --nginx --agree-tos --redirect --staple-ocsp --email $my_email -d $my_hostname
+    sudo systemctl stop nginx
+    sudo ps aux  |  grep -i nginx  |  awk '{print $2}' | xargs sudo kill -9
 else
     echo "Please enter a valid Email Address"
 fi
-echo " "
+echo ""
 
-certbot --nginx --agree-tos --redirect --staple-ocsp --email $my_email -d $my_hostname
-sudo systemctl stop nginx
-sudo ps aux  |  grep -i nginx  |  awk '{print $2}' | xargs sudo kill -9
 
 sudo git clone https://github.com/leenooks/phpLDAPadmin.git /var/www/html/phpldapadmin
-sudo cp ../config.php   /var/www/html/phpldapadmin/config/config.php 
+sudo cp ./config.php   /var/www/html/phpldapadmin/config/config.php 
 sudo sed -i "s|$servers->setValue('server','base',array(''));|$servers->setValue('server','base',array('$dcldap'));|g"  /var/www/html/phpldapadmin/config/config.php
 sudo sed -i "s|$servers->setValue('login','bind_id','');|$servers->setValue('login','bind_id','$aldap');|g"  /var/www/html/phpldapadmin/config/config.php
 sudo sed -i "s|My LDAP Server|$dcldap|g"  /var/www/html/phpldapadmin/config/config.php
@@ -62,18 +62,18 @@ systemctl status nginx
 
 #Allow OpenLDAP to use LE certificates
 
-sudo bash ./cpssl.sh
+sudo bash ./scripts/cpssl.sh
 sudo sed -i "s|your.domain.com|$my_hostname|g" /etc/ldap/ssl.ldif
 sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/ssl.ldif
 sudo sed -i "s|SLAPD_SERVICES|#SLAPD_SERVICES|g"  /etc/default/slapd
 sldapservices='SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
 echo $sldapservices >> /etc/default/slapd
 
-sudo cp ../forcetls.ldif /etc/ldap/
+sudo cp ./forcetls.ldif /etc/ldap/
 sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/forcetls.ldif
 sudo usermod -aG ssl-cert openldap
 
-sudo cp ../enable-ldap-log.ldif /etc/ldap/
+sudo cp ./enable-ldap-log.ldif /etc/ldap/
 sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
 sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config "(objectClass=olcGlobal)" olcLogLevel -LLL
 sudo echo "local4.* /var/log/slapd.log" >> /etc/rsyslog.conf
