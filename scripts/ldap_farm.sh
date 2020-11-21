@@ -27,7 +27,7 @@ then
 fi
 echo " "
 
-cp ../phpldapadmin_farm /etc/nginx/sites-available/phpldapadmin
+cp ./phpldapadmin_farm /etc/nginx/sites-available/phpldapadmin
 sudo sed -i "s/your.domanin.com/$my_hostname/g" /etc/nginx/sites-available/phpldapadmin
 sudo rm /etc/nginx/sites-enabled/default
 sudo ln -s /etc/nginx/sites-available/phpldapadmin /etc/nginx/sites-enabled/
@@ -36,7 +36,7 @@ sudo systemctl stop nginx
 sudo ps aux  |  grep -i nginx  |  awk '{print $2}' | xargs sudo kill -9
 
 sudo git clone https://github.com/leenooks/phpLDAPadmin.git /var/www/html/phpldapadmin
-sudo cp ../config.php   /var/www/html/phpldapadmin/config/config.php 
+sudo cp ./config.php   /var/www/html/phpldapadmin/config/config.php 
 sudo sed -i "s|$servers->setValue('server','base',array(''));|$servers->setValue('server','base',array('$dcldap'));|g"  /var/www/html/phpldapadmin/config/config.php
 sudo sed -i "s|$servers->setValue('login','bind_id','');|$servers->setValue('login','bind_id','$aldap');|g"  /var/www/html/phpldapadmin/config/config.php
 sudo sed -i "s|My LDAP Server|$dcldap|g"  /var/www/html/phpldapadmin/config/config.php
@@ -45,7 +45,7 @@ nginx -t
 systemctl start nginx
 systemctl status nginx
 
-sudo cp ../enable-ldap-log.ldif /etc/ldap/
+sudo cp ./enable-ldap-log.ldif /etc/ldap/
 sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
 sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config "(objectClass=olcGlobal)" olcLogLevel -LLL
 sudo echo "local4.* /var/log/slapd.log" >> /etc/rsyslog.conf
