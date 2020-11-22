@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SITE=`hostname`
+SITE=$1
 
 # move to the correct let's encrypt directory
 cd /etc/letsencrypt/live/$SITE

@@ -1,0 +1,33 @@
+#!/bin/bash
+#Regexp
+regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
+regexdom="(?=^.{5,254}$)(^(?:(?!\d+\.)[a-zA-Z0-9_\-]{1,63}\.?)+\.(?:[a-z]{2,})$)"
+
+#Vars
+checkdig=0;
+checkreg=0;
+address=$1;
+maildomain=`echo $address | awk 'BEGIN { FS = "@" } ; { print $2 }'`;
+
+#Domain Check
+checkdns() {
+        echo $maildomain | awk 'BEGIN { FS = "@" } ; { print $2 }' | xargs dig $maildomain | grep "ANSWER: 0" 1>/dev/null  || checkdig=1;
+}
+
+#Regexp
+checkreg() {
+        if [[ $address =~ $regex ]] || [[ $address =~ $regexdom ]] ;
+                then checkreg=1;
+        fi
+}
+
+#Execute
+checkreg;
+checkdns;
+
+#Results
+if [ $checkreg == 1 ] && [ $checkdig == 1 ];
+        then    echo "OK";
+        else    echo "NOT";
+fi
+#End
