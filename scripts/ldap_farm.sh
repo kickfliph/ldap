@@ -14,18 +14,20 @@ sudo apt-get install ldap-utils -y
 dcldap=`sudo slapcat | grep dc | head -n1 | awk '{print $2}'`
 aldap=`sudo slapcat | grep admin | head -n1 | awk '{print $2}'`
 
-sudo apt install curl apt-transport-https ca-certificates php-fpm php-mbstring php-xmlrpc php-soap php-apcu php-smbclient php-ldap php-redis php-gd php-xml php-intl php-json php-imagick php-mysql php-cli php-ldap php-zip php-curl php-dev libmcrypt-dev php-pear php-ldap nginx-full certbot python-certbot-nginx python3-certbot-nginx -y
+sudo apt install dnsutils curl apt-transport-https ca-certificates php-fpm php-mbstring php-xmlrpc php-soap php-apcu php-smbclient php-ldap php-redis php-gd php-xml php-intl php-json php-imagick php-mysql php-cli php-ldap php-zip php-curl php-dev libmcrypt-dev php-pear php-ldap nginx-full certbot python-certbot-nginx python3-certbot-nginx -y
 
 echo "================================================================================================================================"
 echo ""
-read -p 'Please enter a valid hostname: ' my_hostname
+while [[ $valve != 1 ]]
+do
 
-if [ -z "$my_hostname" ]
-then
-    echo 'Inputs cannot be blank please try again!'
-    exit 0
+read -p  "Please enter a valid hostname: " my_hostname
+
+if [[ ! -z $my_hostname ]] && [[ ! -z `dig +short "$my_hostname"` ]] ; then
+       valve=1
 fi
-echo " "
+done
+valve=0
 
 cp ./phpldapadmin_farm /etc/nginx/sites-available/phpldapadmin
 sudo sed -i "s/your.domanin.com/$my_hostname/g" /etc/nginx/sites-available/phpldapadmin
