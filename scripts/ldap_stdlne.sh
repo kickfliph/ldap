@@ -42,7 +42,7 @@ echo " "
 while [[ `. eml_verf $my_email` != OK ]]
 do
 
-read -p  "Please enter your email address: " my_email
+read -p  "Please enter a valid email address: " my_email
 
 done
    echo ""
