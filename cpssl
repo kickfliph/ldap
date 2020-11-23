@@ -1,0 +1,11 @@
+#!/bin/sh
+
+SITE=$1
+
+# copy the files
+cp /etc/letsencrypt/live/$SITE/cert.pem /etc/ssl/certs/$SITE.cert.pem
+cp /etc/letsencrypt/live/$SITE/fullchain.pem /etc/ssl/certs/$SITE.fullchain.pem
+cp /etc/letsencrypt/live/$SITE/privkey.pem /etc/ssl/certs/$SITE.privkey.pem
+
+# restart slapd to load new certificates
+systemctl restart slapd

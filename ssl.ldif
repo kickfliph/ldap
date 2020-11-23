@@ -1,11 +1,11 @@
 dn: cn=config
 changetype: modify
 add: olcTLSCACertificateFile
-olcTLSCACertificateFile: /etc/letsencrypt/live/your.domain.com/fullchain.pem
+olcTLSCACertificateFile: /etc/ssl/certs/your.domain.com.fullchain.pem
 -
 add: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/letsencrypt/live/your.domain.com/cert.pem
+olcTLSCertificateFile: /etc/ssl/certs/your.domain.com.cert.pem
 -
 add: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: /etc/letsencrypt/live/your.domain.com/privkey.pem
+olcTLSCertificateKeyFile: /etc/ssl/certs/your.domain.com.privkey.pem
 

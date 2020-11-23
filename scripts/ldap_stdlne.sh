@@ -63,7 +63,8 @@ systemctl status nginx
 
 #Allow OpenLDAP to use LE certificates
 
-sudo bash . cpssl $my_hostname
+. cpssl $my_hostname
+sudo cp ./ssl.ldif /etc/ldap/ssl.ldif
 sudo sed -i "s|your.domain.com|$my_hostname|g" /etc/ldap/ssl.ldif
 sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/ssl.ldif
 sudo sed -i "s|SLAPD_SERVICES|#SLAPD_SERVICES|g"  /etc/default/slapd
