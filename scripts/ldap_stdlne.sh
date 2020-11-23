@@ -15,7 +15,7 @@ sudo apt-get install ldap-utils -y
 dcldap=`sudo slapcat | grep dc | head -n1 | awk '{print $2}'`
 aldap=`sudo slapcat | grep admin | head -n1 | awk '{print $2}'`
 
-sudo apt install curl apt-transport-https ca-certificates php-fpm php-mbstring php-xmlrpc php-soap php-apcu php-smbclient php-ldap php-redis php-gd php-xml php-intl php-json php-imagick php-mysql php-cli php-ldap php-zip php-curl php-dev libmcrypt-dev php-pear php-ldap nginx-full certbot python-certbot-nginx python3-certbot-nginx -y
+sudo apt install dnsutils curl apt-transport-https ca-certificates php-fpm php-mbstring php-xmlrpc php-soap php-apcu php-smbclient php-ldap php-redis php-gd php-xml php-intl php-json php-imagick php-mysql php-cli php-ldap php-zip php-curl php-dev libmcrypt-dev php-pear php-ldap nginx-full certbot python-certbot-nginx python3-certbot-nginx -y
 
 echo "================================================================================================================================"
 echo " "
