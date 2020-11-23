@@ -8,4 +8,5 @@ cp /etc/letsencrypt/live/$SITE/fullchain.pem /etc/ssl/certs/$SITE.fullchain.pem
 cp /etc/letsencrypt/live/$SITE/privkey.pem /etc/ssl/certs/$SITE.privkey.pem
 
 # restart slapd to load new certificates
-systemctl restart slapd
+chmod 644 /etc/ssl/certs/$SITE.privkey.pem
+systemctl restart slapd 
