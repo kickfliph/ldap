@@ -15,7 +15,7 @@ sudo apt-get install ldap-utils -y
 dcldap=`sudo slapcat | grep dc | head -n1 | awk '{print $2}'`
 aldap=`sudo slapcat | grep admin | head -n1 | awk '{print $2}'`
 
-sudo apt install gnutls-bin ssl-cert dnsutils curl apt-transport-https ca-certificates php-fpm php-mbstring php-xmlrpc php-soap php-apcu php-smbclient php-ldap php-redis php-gd php-xml php-intl php-json php-imagick php-mysql php-cli php-ldap php-zip php-curl php-dev libmcrypt-dev php-pear php-ldap nginx-full certbot python-certbot-nginx python3-certbot-nginx -y
+sudo apt install dnsutils curl apt-transport-https ca-certificates php-fpm php-mbstring php-xmlrpc php-soap php-apcu php-smbclient php-ldap php-redis php-gd php-xml php-intl php-json php-imagick php-mysql php-cli php-ldap php-zip php-curl php-dev libmcrypt-dev php-pear php-ldap nginx-full certbot python-certbot-nginx python3-certbot-nginx -y
 
 echo "================================================================================================================================"
 echo " "
@@ -61,39 +61,20 @@ nginx -t
 systemctl start nginx
 systemctl status nginx
 
-#. cpssl $my_hostname
-#sudo cp ./ssl.ldif /etc/ldap/ssl.ldif
-#sudo sed -i "s|your.domain.com|$my_hostname|g" /etc/ldap/ssl.ldif
-#sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/ssl.ldif
-#sudo sed -i "s|SLAPD_SERVICES|#SLAPD_SERVICES|g"  /etc/default/slapd
+#Allow OpenLDAP to use LE certificates
 
-sudo mkdir /etc/ssl/templates
-sudo cp ./ca_server.conf /etc/ssl/templates/ca_server.conf
-sudo cp ./ldap_server.conf /etc/ssl/templates/ldap_server.conf
-sudo sed -i "s|Example_Inc|$my_hostname|g" /etc/ssl/templates/ldap_server.conf
-sudo sed -i "s|ldap_example_com|$my_hostname|g" /etc/ssl/templates/ldap_server.conf
-
-sudo certtool -p --outfile /etc/ssl/private/ca_server.key
-sudo certtool -s --load-privkey /etc/ssl/private/ca_server.key --template /etc/ssl/templates/ca_server.conf --outfile /etc/ssl/certs/ca_server.pem
-sudo certtool -p --sec-param high --outfile /etc/ssl/private/ldap_server.key
-sudo certtool -c --load-privkey /etc/ssl/private/ldap_server.key --load-ca-certificate /etc/ssl/certs/ca_server.pem --load-ca-privkey /etc/ssl/private/ca_server.key --template /etc/ssl/templates/ldap_server.conf --outfile /etc/ssl/certs/ldap_server.pem
-
-sudo usermod -aG ssl-cert openldap
-sudo chown :ssl-cert /etc/ssl/private/ldap_server.key
-sudo chmod 640 /etc/ssl/private/ldap_server.key
+. cpssl $my_hostname
 sudo cp ./ssl.ldif /etc/ldap/ssl.ldif
-sudo ldapmodify -H ldapi:// -Y EXTERNAL -f ssl.ldif
+sudo sed -i "s|your.domain.com|$my_hostname|g" /etc/ldap/ssl.ldif
+sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/ssl.ldif
+sudo sed -i "s|SLAPD_SERVICES|#SLAPD_SERVICES|g"  /etc/default/slapd
 sldapservices='SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
 echo $sldapservices >> /etc/default/slapd
 
-sudoservice slapd force-reload
 
-sudo cp /etc/ssl/certs/ca_server.pem /etc/ldap/ca_certs.pem
-tls_ca='TLS_CACERT /etc/ldap/ca_certs.pem'
-sudo sed -i "s|TLS_CACERT|#TLS_CACERT|g"  /etc/ldap/ldap.conf
-sudo echo $tls_ca >> /etc/ldap/ldap.conf
-
-ldapwhoami -H ldap:// -x -ZZ
+sudo cp ./forcetls.ldif /etc/ldap/
+sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/forcetls.ldif
+sudo usermod -aG ssl-cert openldap
 
 sudo cp ./enable-ldap-log.ldif /etc/ldap/
 sudo ldapmodify -Y external -H ldapi:/// -f enable-ldap-log.ldif 
@@ -101,6 +82,3 @@ sudo ldapsearch -Y EXTERNAL -H ldapi:/// -b cn=config "(objectClass=olcGlobal)" 
 sudo echo "local4.* /var/log/slapd.log" >> /etc/rsyslog.conf
 sudo systemctl restart rsyslog
 sudo systemctl restart slapd
-
-#sudo cp ./forcetls.ldif /etc/ldap/
-#sudo ldapmodify -H ldapi:// -Y EXTERNAL -f /etc/ldap/forcetls.ldif
