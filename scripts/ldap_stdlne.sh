@@ -86,7 +86,7 @@ sudo ldapmodify -H ldapi:// -Y EXTERNAL -f ssl.ldif
 sldapservices='SLAPD_SERVICES="ldap:/// ldapi:/// ldaps:///"'
 echo $sldapservices >> /etc/default/slapd
 
-sudoservice slapd force-reload
+sudo service slapd force-reload
 
 sudo cp /etc/ssl/certs/ca_server.pem /etc/ldap/ca_certs.pem
 tls_ca='TLS_CACERT /etc/ldap/ca_certs.pem'
